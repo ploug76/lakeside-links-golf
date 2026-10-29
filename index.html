@@ -343,7 +343,7 @@ addEventListener('keydown',e=>{A();if(e.code=='KeyP'||e.code=='Escape'){togglePa
  if(state!='aim')return;if(e.code=='Space'){meterTap();e.preventDefault()}if(e.code=='ArrowLeft')aimA-=.02;if(e.code=='ArrowRight')aimA+=.02;if(e.code=='ArrowUp')club=Math.max(0,club-1);if(e.code=='ArrowDown')club=Math.min(12,club+1)});
 function togglePause(){if(state=='title')return;paused=!paused;$('pause').textContent=paused?'▶':'⏸'}
 $('pause').onclick=e=>{e.stopPropagation();togglePause()};window.musicPaused=()=>paused;
-$('help').onclick=e=>{e.stopPropagation();panel('<h2>⛳ Lakeside Links Golf</h2><p><b>Aim:</b> drag the course left/right. The yellow target shows where your club carries the ball (with no wind).<br><b>Club:</b> ◀ ▶ (the best club is picked for you).<br><b>Swing:</b> classic 3-tap meter — tap the meter to start, tap to set <b>power</b>, then tap again right on the <b>yellow line</b> for a straight shot. Early or late = hook or slice. Past 100% gives extra distance but the accuracy gets touchy!</p><p><b>Spin:</b> tap the ball icon — low = backspin (stops on the green), high = topspin (more roll), left/right = draw/fade.</p><p><b>Lies:</b> rough and bunkers cost distance (the sand wedge blasts out of bunkers best). Water = 1-stroke drop; out of bounds = stroke & distance. Trees knock the ball down!</p><p><b>Putting:</b> the arrows on the green flow downhill — aim above the hole on side slopes. ◀ ▶ adjust putt strength, then tap the meter to start and again to set power.</p><p>Watch the <b>wind</b> arrow (top right). 9 holes, par 36. Up to 4 players pass the phone — farthest from the hole plays first.</p>')};
+$('help').onclick=e=>{e.stopPropagation();panel('<h2>⛳ Lakeside Links Golf</h2><p><b>Aim:</b> drag the course left/right. The yellow target shows where your club carries the ball (with no wind).<br><b>Club:</b> ◀ ▶ (the best club is picked for you).<br><b>Swing:</b> classic 3-tap meter — tap the meter to start, tap to set <b>power</b>, then tap again right on the <b>yellow line</b> for a straight shot. Early or late = hook or slice. Past 100% gives extra distance but the accuracy gets touchy!</p><p><b>Spin:</b> tap the ball icon — low = backspin (stops on the green), high = topspin (more roll), left/right = draw/fade.</p><p><b>Lies:</b> rough and bunkers cost distance (the sand wedge blasts out of bunkers best). Water = 1-stroke drop; out of bounds = stroke & distance. Trees knock the ball down!</p><p><b>Putting:</b> the arrows on the green flow downhill — aim above the hole on side slopes. ◀ ▶ adjust putt strength, then tap the meter to start and again to set power.</p><p>Watch the <b>wind</b> arrow (top right). 9 holes, par 36. Up to 4 players pass the phone — farthest from the hole plays first.</p><h3 class="gp-help">🎮 Controller</h3><p class="gp-help">Stick or D-pad ◀ ▶ aims, ▲ ▼ changes club, A taps the swing meter (start, power, accuracy). On the title A picks options and Start tees off. Start pauses, Select mutes.</p>')};
 // ======================= LOOP =======================
 let lastT=0;function frame(now){requestAnimationFrame(frame);const dt=Math.min(.05,(now-lastT)/1000||0);lastT=now;if(!paused&&!panelOpen){tNow+=dt;update(dt)}if(state=='title'){drawMenu()}else render()}
 function update(dt){if(state=='intro'){intro-=dt;const t=CL(1-intro/3.2,0,1),e=t*t*(3-2*t);const te=H.def.tee;camT.x=LERP(H.pin[0],te[0],e);camT.y=LERP(H.pin[1],te[1],e);camT.z=fitZoom(LERP(70,140,e));camT.rot=headingTo(te,H.pin);if(intro<=0)beginTurn()}
@@ -647,4 +647,19 @@ window.__unlock={unlocked:un,sample:window.__SAMPLE||null,get badge(){return las
 #palbList li{min-height:30px;height:auto!important;font-size:16px!important}
 .tb{width:46px!important;height:46px!important}#mute{right:55px!important}#help{right:104px!important}
 </style>
+<!-- gamepad:start -->
+<script src="gamepad.js?v=1"></script>
+<script>
+GamepadSupport.init({
+ keys:{left:'ArrowLeft',right:'ArrowRight',up:'ArrowUp',down:'ArrowDown',a:'Space',x:'Space',
+  start:function(p){GamepadSupport.key(state==='title'?'Enter':'KeyP',p)},back:function(p){if(p)document.getElementById('mute').click()}},
+ menuKeys:{x:'Enter'},
+ noRepeat:['a','x','start','back','up','down'],
+ ignoreSel:'#dock,#mute,#pause,#help,#inst,#ios,.tb,#dockHint',
+ backSel:'#pclose',
+ menu:function(){return !!document.querySelector('#palbOv.on,#smpLock.on')||panelOpen||state==='title'||paused;},
+ items:GamepadSupport.list(function(){return (document.querySelector('#palbOv.on,#smpLock.on')||panelOpen||state!=='title')?[]:BTN;})
+});
+</script>
+<!-- gamepad:end -->
 </body></html>
